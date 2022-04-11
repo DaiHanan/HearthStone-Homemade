@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_cardgame" default="compile.module.cardgame">
+  <dirname property="module.cardgame.basedir" file="${ant.file.module_cardgame}"/>
+  
+  <property name="module.jdk.home.cardgame" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.cardgame" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.cardgame" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.cardgame" value="-encoding GBK -source 11 -target 11 ${compiler.args}"/>
+  
+  <property name="cardgame.output.dir" value="${module.cardgame.basedir}/out/production/cardGame"/>
+  <property name="cardgame.testoutput.dir" value="${module.cardgame.basedir}/out/test/cardGame"/>
+  
+  <path id="cardgame.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="cardgame.module.production.classpath">
+    <path refid="${module.jdk.classpath.cardgame}"/>
+    <path refid="library.jogl.classpath"/>
+  </path>
+  
+  <path id="cardgame.runtime.production.module.classpath">
+    <pathelement location="${cardgame.output.dir}"/>
+    <path refid="library.jogl.classpath"/>
+  </path>
+  
+  <path id="cardgame.module.classpath">
+    <path refid="${module.jdk.classpath.cardgame}"/>
+    <pathelement location="${cardgame.output.dir}"/>
+    <path refid="library.jogl.classpath"/>
+  </path>
+  
+  <path id="cardgame.runtime.module.classpath">
+    <pathelement location="${cardgame.testoutput.dir}"/>
+    <pathelement location="${cardgame.output.dir}"/>
+    <path refid="library.jogl.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.cardgame">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.cardgame">
+    <patternset refid="excluded.from.module.cardgame"/>
+  </patternset>
+  
+  <path id="cardgame.module.sourcepath">
+    <dirset dir="${module.cardgame.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.cardgame" depends="compile.module.cardgame.production,compile.module.cardgame.tests" description="Compile module cardGame"/>
+  
+  <target name="compile.module.cardgame.production" depends="register.custom.compilers" description="Compile module cardGame; production classes">
+    <mkdir dir="${cardgame.output.dir}"/>
+    <javac2 destdir="${cardgame.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.cardgame}/javac">
+      <compilerarg line="${compiler.args.cardgame}"/>
+      <bootclasspath refid="cardgame.module.bootclasspath"/>
+      <classpath refid="cardgame.module.production.classpath"/>
+      <src refid="cardgame.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.cardgame"/>
+    </javac2>
+    
+    <copy todir="${cardgame.output.dir}">
+      <fileset dir="${module.cardgame.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.cardgame.tests" depends="register.custom.compilers,compile.module.cardgame.production" description="compile module cardGame; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.cardgame" description="cleanup module">
+    <delete dir="${cardgame.output.dir}"/>
+    <delete dir="${cardgame.testoutput.dir}"/>
+  </target>
+</project>
